@@ -1,0 +1,48 @@
+<!-- templates/login.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Login or Sign Up</h1>
+        {% if form_type == 'login' %}
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+        </div>
+        <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+        <div class="form-group">
+            <button type="submit" id="login" >Login</button>
+        </div>
+        <div id="sign-up"></div>
+
+        {% elif form_type == 'signup' %}
+       
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+        </div>
+        <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+        <div class="form-group">
+            <button  id="sign-up">Sign Up</button>
+        </div>
+        <div id="login"></div>
+        {% endif %}
+    </div>
+    <div id="login-box"></div>
+    <div id="sign-out"></div>
+    <script type="module" src="/static/firebase-login.js"></script>
+</body>
+</html>

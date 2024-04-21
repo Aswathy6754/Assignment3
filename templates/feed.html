@@ -1,0 +1,41 @@
+<!-- templates/feed.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Twitter Feed</title>
+    <link rel="stylesheet" href="/static/feed-styles.css">
+</head>
+<body>
+    <header>
+        <h1>Twitter Feed</h1>
+        <nav>
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Profile</a></li>
+                <li><a href="#">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+    <div class="tweet-container">
+        <div class="create-tweet">
+            <div class="avatar"></div>
+            <div class="content">
+                <form action="/create-tweet" method="post" enctype="multipart/form-data">
+                    <textarea name="tweet" rows="3" placeholder="What's on your mind?"></textarea>
+                    <label for="image-upload" class="image-label">Upload Image</label>
+                    <input id="image-upload" type="file" name="image" accept="image/*">
+                    <button type="submit">Tweet</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <main id="tweet-container" class="tweet-container">
+        
+        <!-- Tweet items will be dynamically added here -->
+    </main>
+    <script src="/static/feed-scripts.js"></script>
+</body>
+</html>
