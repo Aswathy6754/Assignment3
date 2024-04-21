@@ -1,0 +1,155 @@
+/* static/feed-styles.css */
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background-color: #1da1f2;
+    color: #fff;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+nav ul li {
+    display: inline-block;
+    margin-right: 20px;
+}
+
+nav ul li a {
+    color: #fff;
+    text-decoration: none;
+}
+
+main {
+    padding: 20px;
+}
+
+.tweet-container {
+    max-width: 700px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.tweet {
+    display: flex;
+    border-bottom: 1px solid #ddd;
+    padding: 10px 0;
+}
+
+.avatar {
+    width: 50px;
+    height: 50px;
+    background-color: #ccc;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.content {
+    flex-grow: 1;
+}
+
+.user-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+}
+
+.timestamp {
+    color: #888;
+}
+
+.message {
+    margin-top: 5px;
+}
+
+.media {
+    margin-top: 10px;
+}
+
+.media img,
+.media video {
+    max-width: 100%;
+    border-radius: 8px;
+}
+
+.like-button {
+    cursor: pointer;
+    color: #ccc;
+    margin-right: 10px;
+}
+
+.like-button:hover {
+    color: #ff6b6b;
+}
+
+
+.create-tweet {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 20px;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.create-tweet .avatar {
+    width: 50px;
+    height: 50px;
+    background-color: #ccc;
+    border-radius: 50%;
+    margin-right: 10px;
+    flex-shrink: 0;
+}
+
+.create-tweet .content {
+    flex-grow: 1;
+}
+
+.create-tweet form {
+    display: flex;
+    align-items: flex-start;
+}
+
+.create-tweet textarea {
+    width: calc(100% - 70px); /* Adjust width based on avatar size and margin */
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.create-tweet .image-label {
+    color: #1da1f2;
+    cursor: pointer;
+}
+
+.create-tweet #image-upload {
+    display: none;
+}
+
+.create-tweet button {
+    padding: 10px 20px;
+    background-color: #1da1f2;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.create-tweet button:hover {
+    background-color: #0d8af2;
+}
