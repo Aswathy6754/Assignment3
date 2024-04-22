@@ -17,6 +17,8 @@ async def login_page(request: Request):
 async def login_page(request: Request):
     return templates.TemplateResponse("login.html", {"request": request, "form_type": 'signup'})
 
+
+
 @router.post("/signup")
 def signup():
     pass

@@ -39,7 +39,7 @@
                         <!-- Add more user details as needed -->
                     </div>
                     <div>
-                        <button>Follow</button>
+                        <button id="follow_{{user.uid}}" onclick="toggleFollow('{{user.uid}}')" >{{user.follow}}</button>
                     </div>
                 </div>
                 {% endfor %}

@@ -1,0 +1,93 @@
+<!-- templates/login.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Set User name</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>Set User name</h1>
+        <div class="form-group">
+            <label for="username">username:</label>
+            <input type="text" id="username" name="username" required>
+        </div>
+
+        <div class="form-group">
+            <button type="submit" id="set-user-name">set username</button>
+            <span id="error-message"></span>
+        </div>
+    </div>
+    <script>
+
+        window.addEventListener('load', () => {
+
+            let setusername = document.getElementById('set-user-name')
+            let username = document.getElementById('username')
+            let errormessage = document.getElementById('error-message')
+            if (setusername) {
+
+                setusername.addEventListener('click', () => {
+                    if (username.value.trim()) {
+
+                        fetch('/user/add_user', {
+                            method: 'POST',
+                            body: JSON.stringify({ username: username.value })
+                        }).then(response => {
+                            if (!response.ok) {
+                                throw new Error('Failed to add user');
+                            }
+                            return response.json(); // Parse the response JSON
+                        })
+                            .then(data => {
+                                console.log('User added successfully:', data);
+                                function getDataCookie(cookieName) {
+                                    const cookies = document.cookie.split(';');
+                                    for (let cookie of cookies) {
+                                        cookie = cookie.trim();
+                                        if (cookie.startsWith(cookieName + '=')) {
+                                            const token = cookie.substring(cookieName.length + 1);
+                                            return token;
+                                        }
+                                    }
+                                    return null;
+                                }
+
+                                function decodeJWT(string) {
+                                    var arr = string.split('.');
+                                    return { header: JSON.parse(atob(arr[0])), payload: JSON.parse(atob(arr[1])), secret: arr[2] }
+                                }
+
+                                const token = getDataCookie('token');
+
+                                if (token) {
+                                    const userCredentials = decodeJWT(token)
+                                    document.cookie = "email=" + userCredentials.payload.email + ';path=/;Samesite=Strict';
+                                    document.cookie = "uid=" + userCredentials.payload.user_id + ';path=/;Samesite=Strict';
+                                }
+                                window.location ='/'
+                            })
+                            .catch(error => {
+                                console.error('Error adding user:', error);
+                            });
+                    } else {
+                        errormessage.innerText = ' user name can"t be empty'
+                    }
+
+                })
+            }
+
+        })
+
+
+
+    </script>
+
+</body>
+
+</html>
