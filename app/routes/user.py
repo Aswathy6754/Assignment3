@@ -1,5 +1,5 @@
 # app/routes/user.py
-from fastapi import APIRouter
+from fastapi import APIRouter,Query
 from fastapi.responses import RedirectResponse
 from fastapi import Request,HTTPException,Depends
 from fastapi.templating import Jinja2Templates
@@ -95,27 +95,34 @@ async def feed_page(request: Request):
 
 
 @router.get("/")
-async def get_users(request: Request, current_user: dict = Depends(get_current_user)):
+async def get_users(request: Request,username: str = Query(None), current_user: dict = Depends(get_current_user)):
     try:
         # Get display name of the current user
         uid = request.cookies.get("uid")
+        print(username)
 
-        # Query users collection excluding the current user
-        users_ref = db.collection("users").where("uid", "!=", uid).stream()
-    
-        # print(users_snapshot)
-        # # Get following users of the current user
-        following_users = current_user.get("following", [])
+        if not username:
+            users_ref = db.collection("users").where("uid", "!=", uid).stream()
+            following_users = current_user.get("following", [])
 
-        # Prepare response data
-        users = []
-        for user_doc in users_ref:
-            user_data = user_doc.to_dict()
-            user_id = user_data.get("uid")
-            user_data["follow"] = "unfollow" if user_id in following_users else "follow"
-            users.append(user_data)
-        
-        return templates.TemplateResponse("users.html", {"request": request,"users": users })
+            users = []
+            for user_doc in users_ref:
+                user_data = user_doc.to_dict()
+                user_id = user_data.get("uid")
+                user_data["follow"] = "unfollow" if user_id in following_users else "follow"
+                users.append(user_data)
+            
+            return templates.TemplateResponse("users.html", {"request": request,"users": users })
+        else:
+            users_ref = db.collection("users").where("display_name", ">=", username.lower()).where("display_name", "<=", username.lower() + "\uf8ff")
+            user_docs = users_ref.stream()
+
+            users = []
+            for doc in user_docs:
+                user_data = doc.to_dict()
+                users.append(user_data)
+            
+            return templates.TemplateResponse("users.html", {"request": request,"users": users })
 
     except Exception as e:
         print(e)
