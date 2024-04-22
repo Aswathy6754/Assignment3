@@ -1,6 +1,6 @@
 
 
-from fastapi import APIRouter, Request, UploadFile, File,Form
+from fastapi import APIRouter, Request, UploadFile, File,Form,HTTPException
 from fastapi.responses import JSONResponse
 from datetime import datetime
 import firebase_admin
@@ -37,14 +37,10 @@ def upload_image(file: UploadFile):
 async def create_tweet(request: Request,tweet: str = Form(...), image: UploadFile = File(None)):
     # Get user ID from request headers
     uid = request.cookies.get("uid")
-  
-    # try:
-    #     # Check if user is authenticated
-    #     user = auth.get_user(user_id)
-    # except:
-    #     return JSONResponse(status_code=401, content={"error": "Unauthorized"})
 
-    # Create tweet document
+    if len(tweet) > 140:
+            raise HTTPException(status_code=400, detail="Tweet content exceeds 140 characters")
+
     tweet_data = {
         "createdBy": uid,
         "createdAt": datetime.now(),
