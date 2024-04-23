@@ -32,7 +32,35 @@
         </div>
     </div>
     <main id="tweet-container" class="tweet-container">
-        
+        {% for tweet in tweets %}
+        <div   class="tweet-container">
+            <div class="content">
+                <div style="display: flex; justify-content: space-between;">
+                    <div style="display: flex; justify-content: space-between;align-items: center;"> 
+                        <div class="avatar"></div>
+                        <span class="username">{{tweet.display_name}}</span>
+                    </div>
+
+                    <div class="user-info">
+                        <span class="timestamp">{{ tweet.createdAt }}</span>
+                    </div>
+                </div>
+                <div class="message">{{ tweet.tweet }}</div>
+                {% if tweet.imageUrl != "" %}
+                <div class="media"><img src="{{ tweet.imageUrl }}" alt="Image"></div>
+                {% endif %}
+
+                <div class="actions">
+                    <span class="like-button">&#10084;</span>
+                </div>
+                {% if tweet.createdBy == uid %}
+                <button  onclick="deleteTweet('{{tweet.id}}')">Delete</button>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+
+       
     </main>
     <script src="/static/feed-scripts.js"></script>
 </body>

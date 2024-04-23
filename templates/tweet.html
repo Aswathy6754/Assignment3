@@ -88,8 +88,26 @@
                 <p class="tweet-content">{{ tweet.tweet }}</p>
                 <p class="tweet-author">Author: {{ tweet.createdBy }}</p>
                 <p class="tweet-created-at">Created at: {{ tweet.createdAt }}</p>
+                {% if tweet.createdBy == uid %}
+                <button  onclick="deleteTweet('{{tweet.id}}')">Delete</button>
+                {% endif %}
             </div>
         {% endfor %}
     </div>
+    <script>
+         async function deleteTweet(tweetId) {
+            try {
+                const response = await fetch(`/post/tweets/${tweetId}`, {
+                    method: 'DELETE'
+                });
+                if (!response.ok) {
+                    throw new Error('Failed to delete tweet');
+                }
+                window.location.reload()
+            } catch (error) {
+                console.error(error);
+            }
+        }
+    </script>
 </body>
 </html>

@@ -80,16 +80,33 @@ async def feed_page(request: Request):
 
     user_ref = db.collection("users").where("uid", "==", uid).limit(1)
     user_snapshot = user_ref.get()
-    
-    print('user_snapshot')
-    print(user_snapshot)
-
+ 
+  
     if not user_snapshot:
         return RedirectResponse(url="/user/setusername")
-    # userData= user_snapshot[0].to_dict()  
+    
+    try:
+
+        user_data = user_snapshot[0].to_dict()
+        following_uids = [uid]  # Initialize with current user's UID
+        if "following" in user_data:
+            following_uids.extend(user_data["following"])
+
+        tweets_ref = db.collection("tweets").where("createdBy", "in", following_uids)
+        tweet_docs = tweets_ref.stream()
+        tweets = []
+        for doc in tweet_docs:
+            tweet_data = doc.to_dict()
+            tweet_data["id"] = doc.id
+            tweets.append(tweet_data)
+        
+        print(tweets)
+        return templates.TemplateResponse("feed.html", {"request": request, "tweets": tweets,"uid":uid})
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail="Internal server error")
 
     
-    return templates.TemplateResponse("feed.html", {"request": request})
 
 
 
@@ -152,6 +169,7 @@ async def follow_user(request: Request,user_id: str, current_user: dict = Depend
 
         return {"message": "Successfully {action} user with ID: {user_id}","action":action,"user_id":user_id}
     except Exception as e:
+        print(e)
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
