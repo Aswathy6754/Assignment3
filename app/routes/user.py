@@ -114,13 +114,17 @@ async def get_users(request: Request,username: str = Query(None), current_user: 
             
             return templates.TemplateResponse("users.html", {"request": request,"users": users })
         else:
-            users_ref = db.collection("users").where("display_name", ">=", username.lower()).where("display_name", "<=", username.lower() + "\uf8ff")
-            user_docs = users_ref.stream()
+            users_ref = db.collection("users").where("uid", "!=", uid).stream()
+            following_users = current_user.get("following", [])
 
             users = []
-            for doc in user_docs:
+            for doc in users_ref:
                 user_data = doc.to_dict()
-                users.append(user_data)
+                user_id = user_data.get("uid")
+                user_data["follow"] = "unfollow" if user_id in following_users else "follow"
+        
+                if user_data.get('display_name').startswith(username):
+                     users.append(user_data)
             
             return templates.TemplateResponse("users.html", {"request": request,"users": users })
 
