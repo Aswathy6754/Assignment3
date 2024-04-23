@@ -51,12 +51,9 @@ async def get_current_user(request: Request):
         if not token:
             return RedirectResponse(url="/")
         
-        uid = request.cookies.get("uid")
-
-        if not uid:
-            decoded_token = decode_jwt_token(token)
-            uid = decoded_token["user_id"]
-            
+        decoded_token = decode_jwt_token(token)
+        uid = decoded_token["user_id"]
+        
         user_ref = db.collection("users").where("uid", "==", uid).limit(1)
         user_snapshot = user_ref.get()
 
@@ -103,7 +100,6 @@ async def feed_page(request: Request):
         print(tweets)
         return templates.TemplateResponse("feed.html", {"request": request, "tweets": tweets,"uid":uid})
     except Exception as e:
-        print(e)
         raise HTTPException(status_code=500, detail="Internal server error")
 
     
@@ -116,8 +112,11 @@ async def get_users(request: Request,username: str = Query(None), current_user: 
     try:
         # Get display name of the current user
         uid = request.cookies.get("uid")
-        print(username)
+        token = request.cookies.get('token')
 
+        if not token:
+            return RedirectResponse(url="/auth/login")
+        
         if not username:
             users_ref = db.collection("users").where("uid", "!=", uid).stream()
             following_users = current_user.get("following", [])
@@ -228,7 +227,6 @@ async def setusername_page(request: Request, current_user: dict = Depends(get_cu
 
     if not token:
         return RedirectResponse(url="/auth/login")
-
     if not current_user.get('display_name'):
         return templates.TemplateResponse("setusername.html", {"request": request})
     else:

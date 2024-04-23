@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Twitter Feed</title>
     <link rel="stylesheet" href="/static/feed-styles.css">
+    <script type="module" src="/static/firebase-login.js"></script>
 </head>
 <body>
     <header>
@@ -14,7 +15,7 @@
                 <li><a href="/">Home</a></li>
                 <li><a href="/user">users</a></li>
                 <li><a href="#">tweets</a></li>
-                <li><a href="#">Logout</a></li>
+                <li> <button id="sign-out">sign-out</button></li>
             </ul>
         </nav>
     </header>
@@ -62,6 +63,9 @@
 
        
     </main>
+    <div id="login-box"></div>
+    <div id="sign-up"></div>
+    <div id="login"></div>
     <script src="/static/feed-scripts.js"></script>
 </body>
 </html>

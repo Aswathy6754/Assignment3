@@ -116,6 +116,10 @@ async def create_tweet(request: Request,tweet: str = Form(...), image: UploadFil
 async def search_tweets(request: Request,query: str = Query(None)):
     try:
         uid = request.cookies.get('uid')
+        token = request.cookies.get('token')
+
+        if not token:
+            return RedirectResponse(url="/auth/login")
         if query:
             tweets_ref = db.collection("tweets")
             tweet_docs = tweets_ref.stream()
