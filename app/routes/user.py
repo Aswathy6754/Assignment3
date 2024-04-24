@@ -3,18 +3,24 @@ from fastapi import APIRouter,Query
 from fastapi.responses import RedirectResponse
 from fastapi import Request,HTTPException,Depends
 from fastapi.templating import Jinja2Templates
-import firebase_admin
-from firebase_admin import credentials, auth,firestore
+from google.cloud import firestore , storage
+from google.auth.transport import requests
+
 from datetime import datetime
 import base64
 import json
 import binascii
+from google.cloud import firestore 
 
 templates = Jinja2Templates(directory="templates")
 
-cred = credentials.Certificate('firebaseConfig.json') 
-firebase_admin.initialize_app(cred,{'storageBucket': 'Images'})
-db = firestore.client()
+firebase_request_adapter = requests.Request()
+
+db = firestore.Client()
+
+# cred = credentials.Certificate('firebaseConfig.json') 
+# firebase_admin.initialize_app(cred,{'storageBucket': 'Images'})
+# db = firestore.client()
 
 router = APIRouter()
 
@@ -62,7 +68,7 @@ async def get_current_user(request: Request):
         
         return user_snapshot[0].to_dict()  
 
-    except auth.InvalidIdTokenError:
+    except Exception as e:
         raise HTTPException(status_code=401, detail="Invalid token")
 
 
@@ -162,11 +168,16 @@ async def follow_user(request: Request,user_id: str, current_user: dict = Depend
             following_users.append(user_id)
             action = "followed"
 
-        # Update the following array in Firestore
-        user_ref = db.collection("users").document(current_user_uid)
-        user_ref.update({"following": following_users})
+        query_ref = db.collection('users').where('uid', '==', current_user_uid).limit(1)
+        docs = query_ref.stream()
 
-        return {"message": "Successfully {action} user with ID: {user_id}","action":action,"user_id":user_id}
+        # Check if document exists
+        for doc in docs:
+            doc_ref = db.collection('users').document(doc.id)
+            doc_ref.update({"following": following_users})
+
+            return {"message": "Successfully {action} user with ID: {user_id}","action":action,"user_id":user_id}
+
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail="Internal server error")
@@ -211,7 +222,7 @@ async def add_user(request: Request):
         return {'message':'username added'}
 
 
-    except auth.InvalidIdTokenError:
+    except Exception as e:
         raise HTTPException(status_code=401, detail="Invalid token")
 
     except Exception as e:

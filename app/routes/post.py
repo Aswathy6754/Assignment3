@@ -3,9 +3,6 @@
 from fastapi import APIRouter, Request, UploadFile, File,Form,HTTPException,Query
 from fastapi.responses import JSONResponse
 from datetime import datetime
-import firebase_admin
-from firebase_admin import credentials
-from firebase_admin import firestore, auth, storage
 from fastapi import Request,HTTPException,Depends
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import RedirectResponse
@@ -13,13 +10,18 @@ from fastapi import Request,HTTPException,Depends
 import base64
 import json
 import binascii
+from google.cloud import firestore , storage
+from google.auth.transport import requests
+
 
 
 router = APIRouter()
 templates = Jinja2Templates(directory="templates")
 
 
-db = firestore.client()
+firebase_request_adapter = requests.Request()
+
+db = firestore.Client()
 
 def decode_jwt_token(token):
     try:
@@ -60,7 +62,7 @@ async def get_current_user(request: Request):
         
         return user_snapshot[0].to_dict()  
 
-    except auth.InvalidIdTokenError:
+    except Exception as e:
         raise HTTPException(status_code=401, detail="Invalid token")
 
 
@@ -70,8 +72,9 @@ def upload_image(file: UploadFile):
     filename = f"Images/{datetime.now().strftime('%Y%m%d%H%M%S')}-{file.filename}"
     
     # Upload image to Firebase Storage
-    bucket = storage.bucket()
-    bucket = storage.bucket(app=firebase_admin.get_app(), name='assignment-c4726.appspot.com')
+    client = storage.Client()
+
+    bucket = client.get_bucket("assignment-c4726.appspot.com")
 
     bucket_name = bucket.name
     print("Firebase Storage Bucket Name:", bucket_name)
