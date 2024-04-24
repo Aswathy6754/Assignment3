@@ -32,8 +32,17 @@ window.addEventListener('load',()=>{
 
 async function handleSubmit(event) {
     event.preventDefault();
+    let tweet = document.getElementById('tweet').value
+    let image = document.getElementById('image-upload').files[0];
 
-    const formData = new FormData(event.target);
+    const formData = new FormData();
+    if(tweet){
+        formData.append('tweet',tweet)
+    }
+    if(image){
+        formData.append('image',image)
+    }
+
 
     const response = await fetch('/post/tweets/', {
         method: 'POST',
