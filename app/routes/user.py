@@ -18,9 +18,6 @@ firebase_request_adapter = requests.Request()
 
 db = firestore.Client()
 
-# cred = credentials.Certificate('firebaseConfig.json') 
-# firebase_admin.initialize_app(cred,{'storageBucket': 'Images'})
-# db = firestore.client()
 
 router = APIRouter()
 
@@ -107,10 +104,6 @@ async def feed_page(request: Request):
         return templates.TemplateResponse("feed.html", {"request": request, "tweets": tweets,"uid":uid})
     except Exception as e:
         raise HTTPException(status_code=500, detail="Internal server error")
-
-    
-
-
 
 
 @router.get("/")
@@ -228,7 +221,6 @@ async def add_user(request: Request):
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail="Internal server error")
-
 
 
 @router.get("/setusername")
