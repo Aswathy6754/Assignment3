@@ -1,8 +1,6 @@
 from fastapi import FastAPI, Request , HTTPException,UploadFile, Depends, File,Form,Query
 from fastapi.templating import Jinja2Templates
-from fastapi.responses import JSONResponse
-from fastapi.responses import HTMLResponse,RedirectResponse
-from app.routes import auth ,user,post
+from fastapi.responses import RedirectResponse,JSONResponse
 from fastapi.staticfiles import StaticFiles
 from google.cloud import firestore , storage
 from google.auth.transport import requests
