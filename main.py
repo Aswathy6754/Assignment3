@@ -8,6 +8,7 @@ from datetime import datetime
 import base64
 import json
 import binascii
+import mimetypes
 
 
 app = FastAPI()
@@ -243,7 +244,6 @@ async def add_user(request: Request):
         raise HTTPException(status_code=401, detail="Invalid token")
 
     except Exception as e:
-        print(e)
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
@@ -260,12 +260,55 @@ async def setusername_page(request: Request, current_user: dict = Depends(get_cu
         return RedirectResponse(url="/")
 
 
+@app.get("/user/profile/{user_uid}")
+async def profile_page(request: Request,user_uid: str,current_user: dict = Depends(get_current_user)):
+
+    token = request.cookies.get('token')
+
+    if not token:
+        return RedirectResponse(url="/auth/login")
+    else:
+
+
+        
+        query_ref = db.collection('users').where('uid', '==', user_uid).limit(1)
+        user_snapshot = query_ref.get()
+
+        if not user_snapshot:
+            raise HTTPException(status_code=401, detail="user not exist")
+
+        following_users = current_user.get("following", [])
+        button =''
+        if user_uid in following_users:
+            button = "unfollow"
+        else :
+            button = "follow"
+
+        user_details = user_snapshot[0].to_dict()
+
+        tweet_query_ref = db.collection('tweets').where('createdBy', '==', user_uid).limit(10)
+        tweet_snapshot = tweet_query_ref.get()
+
+        tweets = []
+        for tweet in tweet_snapshot:
+                tweet_data = tweet.to_dict()
+                tweets.append(tweet_data)
+
+        print(user_details,button,tweets)
+        return templates.TemplateResponse("profile.html", {"request": request,"user_details":user_details,"button":button,"tweets":tweets})
+
 # Function to upload image to Firebase Storage
 def upload_image(file: UploadFile):
     # Generate unique filename
+    if not file.filename :
+        return ""
+
     filename = f"Images/{datetime.now().strftime('%Y%m%d%H%M%S')}-{file.filename}"
     
-    # Upload image to Firebase Storage
+    mime_type, _ = mimetypes.guess_type(filename)
+    if not mime_type:
+        mime_type = "application/octet-stream"
+    print(mime_type)
     client = storage.Client()
 
     bucket = client.get_bucket("assignment-c4726.appspot.com")
@@ -273,12 +316,56 @@ def upload_image(file: UploadFile):
     bucket_name = bucket.name
     print("Firebase Storage Bucket Name:", bucket_name)
     blob = bucket.blob(filename)
-    blob.upload_from_file(file.file)
+    blob.make_public()
+    blob.upload_from_file(file.file,content_type=mime_type)
     
     # Get download URL
     image_url = blob.public_url
 
     return image_url
+
+@app.get("/post/edit/{tweet_id}")
+async def edittweet_page(request: Request,tweet_id: str,current_user: dict = Depends(get_current_user)):
+
+    token = request.cookies.get('token')
+
+    if not token:
+        return RedirectResponse(url="/auth/login")
+    else:
+        tweet_query_ref = db.collection('tweets').document(tweet_id)
+        tweet_snapshot = tweet_query_ref.get()
+        if not tweet_snapshot.exists:
+            return RedirectResponse(url="/")
+
+        tweet_data = tweet_snapshot.to_dict()
+
+        return templates.TemplateResponse("tweetedit.html", {"request": request,"tweet":tweet_data})
+
+@app.put("/post/edit/{tweet_id}")
+async def update_tweet(tweet_id: str, request: Request, tweet: str = Form(...), image: UploadFile = File(None)):
+    try:
+        tweet_ref = db.collection("tweets").document(tweet_id)
+
+        tweet_snapshot = tweet_ref.get()
+        if not tweet_snapshot.exists:
+            raise HTTPException(status_code=404, detail="Tweet not found")
+
+        update_data = {}
+        if tweet:
+            update_data["tweet"] = tweet
+        
+        # Upload the image file and update the image URL if provided
+        if image:
+            image_url = upload_image(image)
+            update_data["imageUrl"] = image_url
+
+        # Update the tweet document
+        tweet_ref.update(update_data)
+
+        return {"message": "Tweet updated successfully"}
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail="Internal server error")
 
 # Route for creating a tweet
 @app.post("/post/tweets")
@@ -295,6 +382,7 @@ async def create_tweet(request: Request,tweet: str = Form(...), image: UploadFil
         "createdAt": datetime.now(),
         "tweet": tweet,
         "likes": [],
+        "imageUrl":""
     }
 
     if image:

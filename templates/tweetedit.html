@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Twitter Feed</title>
+    <link rel="stylesheet" href="/static/feed-styles.css">
+</head>
+
+<body>
+    <header>
+        <h1>Twitter Feed</h1>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/user">users</a></li>
+                <li><a href="/post/tweets">tweets</a></li>
+                <li> <button id="sign-out">sign-out</button></li>
+            </ul>
+        </nav>
+    </header>
+    <div class="tweet-container">
+        <div class="create-tweet">
+            <div class="avatar"></div>
+            <div class="content">
+                <form id="edittweetForm">
+                    <textarea name="tweet" id="tweet" rows="3"
+                        placeholder="What's on your mind?">{{tweet.tweet}}</textarea>
+                    <label for="image-upload" class="image-label">Upload Image</label>
+                    <input id="image-upload" type="file" name="image" accept="image/*">
+                    <button type="submit">Edit Tweet</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+
+        async function handleSubmit(event) {
+            event.preventDefault();
+            let tweet = document.getElementById('tweet').value
+            let image = document.getElementById('image-upload').files[0];
+
+            const formData = new FormData();
+            if (tweet) {
+                formData.append('tweet', tweet)
+            }
+            if (image) {
+                formData.append('image', image)
+            }
+
+
+
+
+            const response = await fetch(window.location.pathname, {
+                method: 'PUT',
+                body: formData,
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                console.log('Tweet updated successfully:', data);
+                window.location.reload()
+            } else {
+                console.error('Failed to update tweet:', response.statusText);
+            }
+
+        }
+
+        document.getElementById('edittweetForm').addEventListener('submit', handleSubmit);
+    </script>
+
+</body>
+
+</html>

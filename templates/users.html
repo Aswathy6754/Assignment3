@@ -32,14 +32,16 @@
                 <!-- Render users -->
                 {% for user in users %}
                 <div class="user-item">
-                    <div class="user-details">
-                        <div class="user-avatar"></div> <!-- Example: Display user photo URL -->
-                        <div>
-                            <h2>displayName : {{ user.display_name }}</h2> <!-- Example: Display user display name -->
-                            <p>Email: {{ user.email }}</p> <!-- Example: Display user email -->
+                    <a href="/user/profile/{{user.uid}}">
+                        <div class="user-details" >
+                            <div class="user-avatar"></div> <!-- Example: Display user photo URL -->
+                            <div>
+                                <h2>displayName : {{ user.display_name }}</h2> <!-- Example: Display user display name -->
+                                <p>Email: {{ user.email }}</p> <!-- Example: Display user email -->
+                            </div>
+                            <!-- Add more user details as needed -->
                         </div>
-                        <!-- Add more user details as needed -->
-                    </div>
+                    </a>
                     <div>
                         <button id="follow_{{user.uid}}" onclick="toggleFollow('{{user.uid}}')" >{{user.follow}}</button>
                     </div>
