@@ -14,7 +14,7 @@
             <ul>
                 <li><a href="/">Home</a></li>
                 <li><a href="/user">users</a></li>
-                <li><a href="#">tweets</a></li>
+                <li><a href="/post/tweets">tweets</a></li>
                 <li> <button id="sign-out">sign-out</button></li>
             </ul>
         </nav>
@@ -67,5 +67,20 @@
     <div id="sign-up"></div>
     <div id="login"></div>
     <script src="/static/feed-scripts.js"></script>
+    <script>
+        async function deleteTweet(tweetId) {
+           try {
+               const response = await fetch(`/post/tweets/${tweetId}`, {
+                   method: 'DELETE'
+               });
+               if (!response.ok) {
+                   throw new Error('Failed to delete tweet');
+               }
+               window.location.reload()
+           } catch (error) {
+               console.error(error);
+           }
+       }
+   </script>
 </body>
 </html>
