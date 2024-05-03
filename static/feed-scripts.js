@@ -56,6 +56,7 @@ async function handleSubmit(event) {
         const data = await response.json();
         console.log('Tweet created successfully:', data);
         event.target.reset();
+        window.location.reload()
     } else {
         console.error('Failed to create tweet:', response.statusText);
     }
