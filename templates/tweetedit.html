@@ -59,7 +59,8 @@
             if (response.ok) {
                 const data = await response.json();
                 console.log('Tweet updated successfully:', data);
-                window.location.reload()
+                window.location.href = '/'
+
             } else {
                 console.error('Failed to update tweet:', response.statusText);
             }
