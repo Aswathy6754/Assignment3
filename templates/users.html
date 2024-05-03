@@ -1,0 +1,56 @@
+<!-- templates/users.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Users</title>
+    <link rel="stylesheet" href="/static/users-styles.css">
+</head>
+
+<body>
+    <header>
+        <h1>Users</h1>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/user">users</a></li>
+                <li><a href="/post/tweets">tweets</a></li>
+                <li><a href="#">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <div class="search-container">
+            <input type="text" id="search-input" placeholder="Search by username...">
+            <button id="search">search</button>
+        </div>
+        <div class="search-container">
+            <div id="user-list">
+                <!-- Render users -->
+                {% for user in users %}
+                <div class="user-item">
+                    <a href="/user/profile/{{user.uid}}">
+                        <div class="user-details" >
+                            <div class="user-avatar"></div> <!-- Example: Display user photo URL -->
+                            <div>
+                                <h2>displayName : {{ user.display_name }}</h2> <!-- Example: Display user display name -->
+                                <p>Email: {{ user.email }}</p> <!-- Example: Display user email -->
+                            </div>
+                            <!-- Add more user details as needed -->
+                        </div>
+                    </a>
+                    <div>
+                        <button id="follow_{{user.uid}}" onclick="toggleFollow('{{user.uid}}')" >{{user.follow}}</button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </main>
+    <script src="/static/users-scripts.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Twitter Feed</title>
+    <link rel="stylesheet" href="/static/feed-styles.css">
+    <script type="module" src="/static/firebase-login.js"></script>
+</head>
+<body>
+    <header>
+        <h1>Twitter Feed</h1>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/user">users</a></li>
+                <li><a href="/post/tweets">tweets</a></li>
+                <li> <button id="sign-out">sign-out</button></li>
+            </ul>
+        </nav>
+    </header>
+    <div class="tweet-container">
+        <div class="create-tweet">
+            <div class="avatar"></div>
+            <div class="content">
+                <form id="tweetForm">
+                    <textarea name="tweet" id="tweet" rows="3" placeholder="What's on your mind?"></textarea>
+                    <label for="image-upload" class="image-label">Upload Image</label>
+                    <input id="image-upload" type="file" name="image" accept="image/*">
+                    <button type="submit">Tweet</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <main id="tweet-container" class="tweet-container">
+        {% for tweet in tweets %}
+        <div   class="tweet-container">
+            <div class="content">
+                <div style="display: flex; justify-content: space-between;">
+                    <div style="display: flex; justify-content: space-between;align-items: center;"> 
+                        <div class="avatar"></div>
+                        <span class="username">{{tweet.display_name}}</span>
+                    </div>
+
+                    <div class="user-info">
+                        <span class="timestamp">{{ tweet.createdAt }}</span>
+                    </div>
+                </div>
+                <div class="message">{{ tweet.tweet }}</div>
+                {% if tweet.imageUrl != "" %}
+                <div class="media"><img src="{{ tweet.imageUrl }}" alt="Image"></div>
+                {% endif %}
+
+                <div class="actions">
+                    <span class="like-button">&#10084;</span>
+                </div>
+                {% if tweet.createdBy == uid %}
+                <a  href="/post/edit/{{tweet.id}}" >Edit</a>
+                <button  onclick="deleteTweet('{{tweet.id}}')">Delete</button>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+
+       
+    </main>
+    <div id="login-box"></div>
+    <div id="sign-up"></div>
+    <div id="login"></div>
+    <script src="/static/feed-scripts.js"></script>
+    <script>
+        async function deleteTweet(tweetId) {
+           try {
+               const response = await fetch(`/post/tweets/${tweetId}`, {
+                   method: 'DELETE'
+               });
+               if (!response.ok) {
+                   throw new Error('Failed to delete tweet');
+               }
+               window.location.reload()
+           } catch (error) {
+               console.error(error);
+           }
+       }
+   </script>
+</body>
+</html>
