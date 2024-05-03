@@ -308,7 +308,10 @@ def upload_image(file: UploadFile):
     mime_type, _ = mimetypes.guess_type(filename)
     if not mime_type:
         mime_type = "application/octet-stream"
-    print(mime_type)
+  
+  
+    
+    # Upload image to Firebase Storage
     client = storage.Client()
 
     bucket = client.get_bucket("assignment-c4726.appspot.com")
@@ -316,13 +319,14 @@ def upload_image(file: UploadFile):
     bucket_name = bucket.name
     print("Firebase Storage Bucket Name:", bucket_name)
     blob = bucket.blob(filename)
-    blob.make_public()
-    blob.upload_from_file(file.file,content_type=mime_type)
+    blob.upload_from_file(file.file,mime_type)
     
     # Get download URL
-    image_url = blob.public_url
+    blob.make_public()
+    public_url = blob.public_url
+    print("Public URL:", public_url)
+    return public_url
 
-    return image_url
 
 @app.get("/post/edit/{tweet_id}")
 async def edittweet_page(request: Request,tweet_id: str,current_user: dict = Depends(get_current_user)):

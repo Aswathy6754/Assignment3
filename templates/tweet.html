@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Twitter Clone</title>
+    <title>Twitter Tweets</title>
     <link rel="stylesheet" href="/static/users-styles.css">
 
     <style>
@@ -59,7 +59,7 @@
 </head>
 <body>
     <header>
-        <h1>Users</h1>
+        <h1>Tweets</h1>
         <nav>
             <ul>
                 <li><a href="/">Home</a></li>
@@ -70,7 +70,7 @@
         </nav>
     </header>
     <div class="container">
-        <h1>Twitter Clone</h1>
+        <h1>Tweets</h1>
         
         <!-- Search bar -->
         <div class="search-bar">
@@ -86,7 +86,7 @@
         {% for tweet in tweets %}
             <div class="tweet">
                 <p class="tweet-content">{{ tweet.tweet }}</p>
-                <p class="tweet-author">Author: {{ tweet.createdBy }}</p>
+                <p class="tweet-author">Author: {{ tweet.display_name }}</p>
                 <p class="tweet-created-at">Created at: {{ tweet.createdAt }}</p>
                 {% if tweet.createdBy == uid %}
                 <button  onclick="deleteTweet('{{tweet.id}}')">Delete</button>
