@@ -16,7 +16,8 @@
         <nav>
             <ul>
                 <li><a href="/">Home</a></li>
-                <li><a href="#">Profile</a></li>
+                <li><a href="/user">users</a></li>
+                <li><a href="/post/tweets">tweets</a></li>
                 <li><a href="#">Logout</a></li>
             </ul>
         </nav>
@@ -24,20 +25,23 @@
     <main>
         <div class="search-container">
             <input type="text" id="search-input" placeholder="Search by username...">
+            <button id="search">search</button>
         </div>
         <div class="search-container">
             <div id="user-list">
                 <!-- Render users -->
                 {% for user in users %}
                 <div class="user-item">
-                    <div class="user-details">
-                        <div class="user-avatar"></div> <!-- Example: Display user photo URL -->
-                        <div>
-                            <h2>displayName : {{ user.display_name }}</h2> <!-- Example: Display user display name -->
-                            <p>Email: {{ user.email }}</p> <!-- Example: Display user email -->
+                    <a href="/user/profile/{{user.uid}}">
+                        <div class="user-details" >
+                            <div class="user-avatar"></div> <!-- Example: Display user photo URL -->
+                            <div>
+                                <h2>displayName : {{ user.display_name }}</h2> <!-- Example: Display user display name -->
+                                <p>Email: {{ user.email }}</p> <!-- Example: Display user email -->
+                            </div>
+                            <!-- Add more user details as needed -->
                         </div>
-                        <!-- Add more user details as needed -->
-                    </div>
+                    </a>
                     <div>
                         <button id="follow_{{user.uid}}" onclick="toggleFollow('{{user.uid}}')" >{{user.follow}}</button>
                     </div>

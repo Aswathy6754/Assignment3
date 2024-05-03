@@ -21,3 +21,21 @@ const toggleFollow = async (userId) => {
         // Handle errors (e.g., display error message to the user)
     }
 };
+
+
+window.addEventListener('load',()=>{
+
+    let searchButton =document.getElementById('search')
+    let username =document.getElementById('search-input')
+  
+
+    if(searchButton){
+        
+        searchButton.addEventListener('click',()=>{
+            if(username.value.trim() !==""){
+                window.location =`/user/?username=${username.value}`
+            }
+            
+        })
+    }
+})
