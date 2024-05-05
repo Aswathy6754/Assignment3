@@ -5,6 +5,7 @@ from fastapi.staticfiles import StaticFiles
 from google.cloud import firestore , storage
 from google.auth.transport import requests
 from datetime import datetime
+from local_constants import PROJECT_NAME, PROJECT_STORAGE_BUCKET
 import base64
 import json
 import binascii
@@ -124,9 +125,11 @@ async def feed_page(request: Request):
             tweet_data = doc.to_dict()
             tweet_data["id"] = doc.id
             tweets.append(tweet_data)
-        
-        print(tweets)
-        return templates.TemplateResponse("feed.html", {"request": request, "tweets": tweets,"uid":uid})
+
+        sorted_tweets = sorted(tweets, key=lambda x: x['createdAt'], reverse=True)
+
+        print(sorted_tweets)
+        return templates.TemplateResponse("feed.html", {"request": request, "tweets": sorted_tweets,"uid":uid})
     except Exception as e:
         raise HTTPException(status_code=500, detail="Internal server error")
 
@@ -314,7 +317,7 @@ def upload_image(file: UploadFile):
     # Upload image to Firebase Storage
     client = storage.Client()
 
-    bucket = client.get_bucket("assignment-c4726.appspot.com")
+    bucket = client.get_bucket(PROJECT_STORAGE_BUCKET)
 
     bucket_name = bucket.name
     print("Firebase Storage Bucket Name:", bucket_name)
